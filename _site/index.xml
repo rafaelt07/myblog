@@ -1,0 +1,1921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>myblog</title>
+<link>https://your-website-url.example.com/</link>
+<atom:link href="https://your-website-url.example.com/index.xml" rel="self" type="application/rss+xml"/>
+<description>A blog built with Quarto</description>
+<generator>quarto-1.8.26</generator>
+<lastBuildDate>Sun, 23 Nov 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Consulta do dólar</title>
+  <dc:creator>Rafael </dc:creator>
+  <link>https://your-website-url.example.com/posts/Atividade_Dólar/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Neste post irei mostrar como desenvolver uma função em python que irá se conectar com a API do Banco Central. Esta função utilizará uma consulta que trará a consulta do valor do dólar no mês referente</p>
+<div id="3531835f" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> requests</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> calendar</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datetime <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime, timedelta</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> plotly.graph_objects <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> go</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> f(periodo):</span>
+<span id="cb1-8">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb1-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Busca cotação do dólar para um período (MMYYYY) e gera gráfico.</span></span>
+<span id="cb1-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    </span></span>
+<span id="cb1-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Args:</span></span>
+<span id="cb1-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        periodo: String no formato "MMYYYY" (ex: "082021")</span></span>
+<span id="cb1-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        </span></span>
+<span id="cb1-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Returns:</span></span>
+<span id="cb1-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        Figura do Plotly com gráfico de linha da cotação</span></span>
+<span id="cb1-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb1-17">    first_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.strptime(periodo, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%m%Y"</span>)</span>
+<span id="cb1-18">    last_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> first_date.replace(</span>
+<span id="cb1-19">        day<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>calendar.monthrange(first_date.year, first_date.month)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb1-20">    )</span>
+<span id="cb1-21">    </span>
+<span id="cb1-22">    data_inicial <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> first_date.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">-%Y"</span>)</span>
+<span id="cb1-23">    data_final <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> last_date.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">-%Y"</span>)</span>
+<span id="cb1-24">    </span>
+<span id="cb1-25">    url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@dataInicial='</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data_inicial<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&amp;@dataFinalCotacao='</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data_final<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&amp;$format=json"</span></span>
+<span id="cb1-26">    </span>
+<span id="cb1-27">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Buscando cotações de </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>first_date<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/%m/%Y'</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> a </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>last_date<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/%m/%Y'</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">..."</span>)</span>
+<span id="cb1-28">    </span>
+<span id="cb1-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span>:</span>
+<span id="cb1-30">        response <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> requests.get(url)</span>
+<span id="cb1-31">        response.raise_for_status()</span>
+<span id="cb1-32">        data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> response.json()</span>
+<span id="cb1-33">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">except</span> requests.exceptions.RequestException <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> e:</span>
+<span id="cb1-34">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Erro ao buscar dados: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>e<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-35">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb1-36">    </span>
+<span id="cb1-37">    cotacoes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> data.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'value'</span>, [])</span>
+<span id="cb1-38">    </span>
+<span id="cb1-39">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> cotacoes:</span>
+<span id="cb1-40">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Nenhuma cotação encontrada para este período."</span>)</span>
+<span id="cb1-41">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb1-42">    </span>
+<span id="cb1-43">    cotacoes_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb1-44">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> cotacao <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> cotacoes:</span>
+<span id="cb1-45">        data_cotacao <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.strptime(cotacao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dataHoraCotacao'</span>], <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> %H:%M:%S.</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%f</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-46">        cotacoes_dict[data_cotacao.date()] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb1-47">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'compra'</span>: cotacao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cotacaoCompra'</span>],</span>
+<span id="cb1-48">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'venda'</span>: cotacao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cotacaoVenda'</span>]</span>
+<span id="cb1-49">        }</span>
+<span id="cb1-50">    </span>
+<span id="cb1-51">    datas <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb1-52">    valores_compra <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb1-53">    valores_venda <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb1-54">    </span>
+<span id="cb1-55">    current_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> first_date</span>
+<span id="cb1-56">    ultima_cotacao <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb1-57">    </span>
+<span id="cb1-58">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> current_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> last_date:</span>
+<span id="cb1-59">        date_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> current_date.date()</span>
+<span id="cb1-60">        </span>
+<span id="cb1-61">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> date_key <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> cotacoes_dict:</span>
+<span id="cb1-62">            ultima_cotacao <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cotacoes_dict[date_key]</span>
+<span id="cb1-63">        </span>
+<span id="cb1-64">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> ultima_cotacao:</span>
+<span id="cb1-65">            datas.append(current_date)</span>
+<span id="cb1-66">            valores_compra.append(ultima_cotacao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'compra'</span>])</span>
+<span id="cb1-67">            valores_venda.append(ultima_cotacao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'venda'</span>])</span>
+<span id="cb1-68">        </span>
+<span id="cb1-69">        current_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> timedelta(days<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-70">    </span>
+<span id="cb1-71">    fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> go.Figure()</span>
+<span id="cb1-72">    </span>
+<span id="cb1-73">    fig.add_trace(go.Scatter(</span>
+<span id="cb1-74">        x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>datas,</span>
+<span id="cb1-75">        y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>valores_compra,</span>
+<span id="cb1-76">        mode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lines+markers'</span>,</span>
+<span id="cb1-77">        name<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Cotação Compra'</span>,</span>
+<span id="cb1-78">        line<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'blue'</span>, width<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),</span>
+<span id="cb1-79">        marker<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span>
+<span id="cb1-80">    ))</span>
+<span id="cb1-81">    </span>
+<span id="cb1-82">    fig.add_trace(go.Scatter(</span>
+<span id="cb1-83">        x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>datas,</span>
+<span id="cb1-84">        y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>valores_venda,</span>
+<span id="cb1-85">        mode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lines+markers'</span>,</span>
+<span id="cb1-86">        name<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Cotação Venda'</span>,</span>
+<span id="cb1-87">        line<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, width<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),</span>
+<span id="cb1-88">        marker<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span>
+<span id="cb1-89">    ))</span>
+<span id="cb1-90">    </span>
+<span id="cb1-91">    mes_nome <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> first_date.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%B"</span>).capitalize()</span>
+<span id="cb1-92">    ano <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> first_date.year</span>
+<span id="cb1-93">    </span>
+<span id="cb1-94">    fig.update_layout(</span>
+<span id="cb1-95">        title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Cotação do Dólar - </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>mes_nome<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> de </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ano<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>,</span>
+<span id="cb1-96">        xaxis_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Data'</span>,</span>
+<span id="cb1-97">        yaxis_title<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Cotação (R$)'</span>,</span>
+<span id="cb1-98">        hovermode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x unified'</span>,</span>
+<span id="cb1-99">        template<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'plotly_white'</span>,</span>
+<span id="cb1-100">        xaxis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(tickformat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/%m'</span>),</span>
+<span id="cb1-101">        height<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">600</span></span>
+<span id="cb1-102">    )</span>
+<span id="cb1-103">    </span>
+<span id="cb1-104">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Gráfico gerado com sucesso! Total de dias: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(datas)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-105">    </span>
+<span id="cb1-106">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> fig</span>
+<span id="cb1-107"></span>
+<span id="cb1-108"></span>
+<span id="cb1-109">periodo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"082021"</span></span>
+<span id="cb1-110">fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> f(periodo)</span>
+<span id="cb1-111">fig.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Buscando cotações de 01/08/2021 a 31/08/2021...
+Gráfico gerado com sucesso! Total de dias: 30</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.2.0.min.js" integrity="sha256-iZ2u/oU2wf/vDbl/ChcX93WgbBRSBvUO6N413hDz7xM=" crossorigin="anonymous"></script>                <div id="9acdf124-f8c7-498f-a7a9-9739ed8ef998" class="plotly-graph-div" style="height:600px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("9acdf124-f8c7-498f-a7a9-9739ed8ef998")) {                    Plotly.newPlot(                        "9acdf124-f8c7-498f-a7a9-9739ed8ef998",                        [{"line":{"color":"blue","width":2},"marker":{"size":4},"mode":"lines+markers","name":"Cota\u00e7\u00e3o Compra","x":["2021-08-02T00:00:00","2021-08-03T00:00:00","2021-08-04T00:00:00","2021-08-05T00:00:00","2021-08-06T00:00:00","2021-08-07T00:00:00","2021-08-08T00:00:00","2021-08-09T00:00:00","2021-08-10T00:00:00","2021-08-11T00:00:00","2021-08-12T00:00:00","2021-08-13T00:00:00","2021-08-14T00:00:00","2021-08-15T00:00:00","2021-08-16T00:00:00","2021-08-17T00:00:00","2021-08-18T00:00:00","2021-08-19T00:00:00","2021-08-20T00:00:00","2021-08-21T00:00:00","2021-08-22T00:00:00","2021-08-23T00:00:00","2021-08-24T00:00:00","2021-08-25T00:00:00","2021-08-26T00:00:00","2021-08-27T00:00:00","2021-08-28T00:00:00","2021-08-29T00:00:00","2021-08-30T00:00:00","2021-08-31T00:00:00"],"y":[5.1373,5.2458,5.2085,5.1459,5.2404,5.2404,5.2404,5.2768,5.2211,5.2007,5.2345,5.2468,5.2468,5.2468,5.2489,5.2579,5.3019,5.4174,5.4268,5.4268,5.4268,5.368,5.3011,5.2459,5.2423,5.2194,5.2194,5.2194,5.1946,5.1427],"type":"scatter"},{"line":{"color":"red","width":2},"marker":{"size":4},"mode":"lines+markers","name":"Cota\u00e7\u00e3o Venda","x":["2021-08-02T00:00:00","2021-08-03T00:00:00","2021-08-04T00:00:00","2021-08-05T00:00:00","2021-08-06T00:00:00","2021-08-07T00:00:00","2021-08-08T00:00:00","2021-08-09T00:00:00","2021-08-10T00:00:00","2021-08-11T00:00:00","2021-08-12T00:00:00","2021-08-13T00:00:00","2021-08-14T00:00:00","2021-08-15T00:00:00","2021-08-16T00:00:00","2021-08-17T00:00:00","2021-08-18T00:00:00","2021-08-19T00:00:00","2021-08-20T00:00:00","2021-08-21T00:00:00","2021-08-22T00:00:00","2021-08-23T00:00:00","2021-08-24T00:00:00","2021-08-25T00:00:00","2021-08-26T00:00:00","2021-08-27T00:00:00","2021-08-28T00:00:00","2021-08-29T00:00:00","2021-08-30T00:00:00","2021-08-31T00:00:00"],"y":[5.1379,5.2464,5.2091,5.1464,5.241,5.241,5.241,5.2774,5.2217,5.2013,5.2351,5.2474,5.2474,5.2474,5.2495,5.2585,5.3025,5.418,5.4274,5.4274,5.4274,5.3686,5.3017,5.2465,5.2429,5.22,5.22,5.22,5.1952,5.1433],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"title":{"text":"Data"},"tickformat":"%d\u002f%m"},"title":{"text":"Cota\u00e7\u00e3o do D\u00f3lar - August de 2021"},"yaxis":{"title":{"text":"Cota\u00e7\u00e3o (R$)"}},"hovermode":"x unified","height":600},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('9acdf124-f8c7-498f-a7a9-9739ed8ef998');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>api</category>
+  <category>consulta</category>
+  <category>Dólar</category>
+  <guid>https://your-website-url.example.com/posts/Atividade_Dólar/</guid>
+  <pubDate>Sun, 23 Nov 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/Atividade_Dólar/![](Dolar.jpeg)" medium="image"/>
+</item>
+<item>
+  <title>Monitoramento de Frota de Ônibus</title>
+  <dc:creator>Rafael Tasca</dc:creator>
+  <link>https://your-website-url.example.com/posts/Consulta do Onibus/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Esta atividade monitora em tempo real a posição dos ônibus da linha 8700-10.</p>
+<div id="e09b1364" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> requests</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> folium</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># --- CONFIGURAÇÃO ---</span></span>
+<span id="cb1-5">TOKEN <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3f9cf7fdd8895aa93d08aea526cde96f307931cbb79a1e726e6a5b946eb2d6f4'</span></span>
+<span id="cb1-6">LINHA_BUSCA <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'8700-10'</span> </span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. AUTENTICAÇÃO</span></span>
+<span id="cb1-9">session <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> requests.Session()</span>
+<span id="cb1-10">url_auth <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'http://api.olhovivo.sptrans.com.br/v2.1/Login/Autenticar?token=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>TOKEN<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span></span>
+<span id="cb1-11">session.post(url_auth)</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. BUSCAR LINHA</span></span>
+<span id="cb1-14">url_linha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'http://api.olhovivo.sptrans.com.br/v2.1/Linha/Buscar?termosBusca=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>LINHA_BUSCA<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span></span>
+<span id="cb1-15">response_linha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> session.get(url_linha)</span>
+<span id="cb1-16">codigo_linha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> response_linha.json()[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cl'</span>]</span>
+<span id="cb1-17"></span>
+<span id="cb1-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. BUSCAR PARADAS</span></span>
+<span id="cb1-19">url_paradas <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'http://api.olhovivo.sptrans.com.br/v2.1/Parada/BuscarParadasPorLinha?codigoLinha=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>codigo_linha<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span></span>
+<span id="cb1-20">dados_paradas <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> session.get(url_paradas).json()</span>
+<span id="cb1-21"></span>
+<span id="cb1-22"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Centralizar mapa</span></span>
+<span id="cb1-23">lat_inicial <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dados_paradas[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'py'</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> dados_paradas <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">23.55</span></span>
+<span id="cb1-24">lon_inicial <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dados_paradas[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'px'</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> dados_paradas <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">46.63</span></span>
+<span id="cb1-25"></span>
+<span id="cb1-26">m <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> folium.Map(location<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[lat_inicial, lon_inicial], zoom_start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13</span>)</span>
+<span id="cb1-27"></span>
+<span id="cb1-28"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Adiciona Paradas (Azul)</span></span>
+<span id="cb1-29"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> dados_paradas:</span>
+<span id="cb1-30">    folium.Marker(</span>
+<span id="cb1-31">        [p[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'py'</span>], p[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'px'</span>]],</span>
+<span id="cb1-32">        popup<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Parada: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>p[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'np'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>,</span>
+<span id="cb1-33">        icon<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>folium.Icon(color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'blue'</span>, icon<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bus'</span>, prefix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'fa'</span>)</span>
+<span id="cb1-34">    ).add_to(m)</span>
+<span id="cb1-35"></span>
+<span id="cb1-36"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 4. BUSCAR ÔNIBUS EM TEMPO REAL</span></span>
+<span id="cb1-37">url_posicao <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'http://api.olhovivo.sptrans.com.br/v2.1/Posicao/Linha?codigoLinha=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>codigo_linha<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span></span>
+<span id="cb1-38">dados_posicao <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> session.get(url_posicao).json()</span>
+<span id="cb1-39"></span>
+<span id="cb1-40"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Adiciona Ônibus (Vermelho)</span></span>
+<span id="cb1-41"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vs'</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> dados_posicao:</span>
+<span id="cb1-42">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> v <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> dados_posicao[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vs'</span>]:</span>
+<span id="cb1-43">        folium.Marker(</span>
+<span id="cb1-44">            [v[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'py'</span>], v[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'px'</span>]],</span>
+<span id="cb1-45">            popup<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Prefixo: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>v[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>,</span>
+<span id="cb1-46">            icon<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>folium.Icon(color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, icon<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'location-arrow'</span>, prefix<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'fa'</span>)</span>
+<span id="cb1-47">        ).add_to(m)</span>
+<span id="cb1-48"></span>
+<span id="cb1-49"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Exibe o mapa</span></span>
+<span id="cb1-50">m</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe srcdoc="<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; />
+    <script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;></script>
+    <script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;></script>
+    <script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;></script>
+    <script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;></script>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css&quot;/>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/>
+    <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/>
+    
+            <meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; />
+            <style>
+                #map_7c7a842a4369ce3c7e0c77369b548b11 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class=&quot;folium-map&quot; id=&quot;map_7c7a842a4369ce3c7e0c77369b548b11&quot; ></div>
+        
+</body>
+<script>
+    
+    
+            var map_7c7a842a4369ce3c7e0c77369b548b11 = L.map(
+                &quot;map_7c7a842a4369ce3c7e0c77369b548b11&quot;,
+                {
+                    center: [-23.576878, -46.707716],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  &quot;zoom&quot;: 13,
+  &quot;zoomControl&quot;: true,
+  &quot;preferCanvas&quot;: false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_71ba3ce0f0a946dcb4610c69868c1977 = L.tileLayer(
+                &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
+                {
+  &quot;minZoom&quot;: 0,
+  &quot;maxZoom&quot;: 19,
+  &quot;maxNativeZoom&quot;: 19,
+  &quot;noWrap&quot;: false,
+  &quot;attribution&quot;: &quot;\u0026copy; \u003ca href=\&quot;https://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors&quot;,
+  &quot;subdomains&quot;: &quot;abc&quot;,
+  &quot;detectRetina&quot;: false,
+  &quot;tms&quot;: false,
+  &quot;opacity&quot;: 1,
+}
+
+            );
+        
+    
+            tile_layer_71ba3ce0f0a946dcb4610c69868c1977.addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var marker_68b2a0ba14350e96f187765d94bf80cd = L.marker(
+                [-23.576878, -46.707716],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_5eb99fa1a532b572663234806d575261 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_abb6df785311616528a6685f71eb3dc1 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_48716ae03c11c7bd5f583aca5a432212 = $(`<div id=&quot;html_48716ae03c11c7bd5f583aca5a432212&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: DRAUSIO B/C</div>`)[0];
+                popup_abb6df785311616528a6685f71eb3dc1.setContent(html_48716ae03c11c7bd5f583aca5a432212);
+            
+        
+
+        marker_68b2a0ba14350e96f187765d94bf80cd.bindPopup(popup_abb6df785311616528a6685f71eb3dc1)
+        ;
+
+        
+    
+    
+                marker_68b2a0ba14350e96f187765d94bf80cd.setIcon(icon_5eb99fa1a532b572663234806d575261);
+            
+    
+            var marker_be82d200f6c74b1b2f7c685d199d292d = L.marker(
+                [-23.584837, -46.71869],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_f627fb5cea0c07127ea8d2850df27bbb = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_a1f58bb3871a1592c2fd4953c28ee4b5 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_0695ce5fcf1b117f528585dc6c33b381 = $(`<div id=&quot;html_0695ce5fcf1b117f528585dc6c33b381&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: TRES IRMAOS B/C</div>`)[0];
+                popup_a1f58bb3871a1592c2fd4953c28ee4b5.setContent(html_0695ce5fcf1b117f528585dc6c33b381);
+            
+        
+
+        marker_be82d200f6c74b1b2f7c685d199d292d.bindPopup(popup_a1f58bb3871a1592c2fd4953c28ee4b5)
+        ;
+
+        
+    
+    
+                marker_be82d200f6c74b1b2f7c685d199d292d.setIcon(icon_f627fb5cea0c07127ea8d2850df27bbb);
+            
+    
+            var marker_aed747e28bcbdf3ed95d21c5775797ca = L.marker(
+                [-23.555883, -46.66306],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_e16b0d31df4c79ccad902fa7a88af78a = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_f31c6005a56ec90909d02003cb39563e = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_4d08394df8399c4ffa3fc150745bbd8d = $(`<div id=&quot;html_4d08394df8399c4ffa3fc150745bbd8d&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: PAULISTA B/C</div>`)[0];
+                popup_f31c6005a56ec90909d02003cb39563e.setContent(html_4d08394df8399c4ffa3fc150745bbd8d);
+            
+        
+
+        marker_aed747e28bcbdf3ed95d21c5775797ca.bindPopup(popup_f31c6005a56ec90909d02003cb39563e)
+        ;
+
+        
+    
+    
+                marker_aed747e28bcbdf3ed95d21c5775797ca.setIcon(icon_e16b0d31df4c79ccad902fa7a88af78a);
+            
+    
+            var marker_a521b7104bfde8be6241a445df324822 = L.marker(
+                [-23.551843, -46.657399],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_77b81f802f90574972dc75333a5ca021 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_a3f6149a1b65a86db980aa3999a1d4e7 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_eeb86a9364a73d9e10c20cd04541ceb9 = $(`<div id=&quot;html_eeb86a9364a73d9e10c20cd04541ceb9&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: PEDRO TAQUES B/C</div>`)[0];
+                popup_a3f6149a1b65a86db980aa3999a1d4e7.setContent(html_eeb86a9364a73d9e10c20cd04541ceb9);
+            
+        
+
+        marker_a521b7104bfde8be6241a445df324822.bindPopup(popup_a3f6149a1b65a86db980aa3999a1d4e7)
+        ;
+
+        
+    
+    
+                marker_a521b7104bfde8be6241a445df324822.setIcon(icon_77b81f802f90574972dc75333a5ca021);
+            
+    
+            var marker_93fe23831e17978e151f3f4ab784df1e = L.marker(
+                [-23.549577, -46.653216],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_cf23d90c166a66a563d0a42001bd67cd = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_a6ea381b5fcf2b0cf900846d6a79d2a9 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_ce0bce949b5769364f94303ff54fff00 = $(`<div id=&quot;html_ce0bce949b5769364f94303ff54fff00&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: ANTÔNIA DE QUEIRÓS - B/C</div>`)[0];
+                popup_a6ea381b5fcf2b0cf900846d6a79d2a9.setContent(html_ce0bce949b5769364f94303ff54fff00);
+            
+        
+
+        marker_93fe23831e17978e151f3f4ab784df1e.bindPopup(popup_a6ea381b5fcf2b0cf900846d6a79d2a9)
+        ;
+
+        
+    
+    
+                marker_93fe23831e17978e151f3f4ab784df1e.setIcon(icon_cf23d90c166a66a563d0a42001bd67cd);
+            
+    
+            var marker_026fa5652f4c4e8e0758f43a0fd95247 = L.marker(
+                [-23.548174, -46.649565],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_1373937053d7af9a6a61a01b3efb16f5 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_c3f21c8ead5921d87b6610c9d87f36cd = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_b39422a462671b5cf8169e24fcf9d6cc = $(`<div id=&quot;html_b39422a462671b5cf8169e24fcf9d6cc&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: CAIO PRADO B/C</div>`)[0];
+                popup_c3f21c8ead5921d87b6610c9d87f36cd.setContent(html_b39422a462671b5cf8169e24fcf9d6cc);
+            
+        
+
+        marker_026fa5652f4c4e8e0758f43a0fd95247.bindPopup(popup_c3f21c8ead5921d87b6610c9d87f36cd)
+        ;
+
+        
+    
+    
+                marker_026fa5652f4c4e8e0758f43a0fd95247.setIcon(icon_1373937053d7af9a6a61a01b3efb16f5);
+            
+    
+            var marker_056822cb564d244b48b14e8d3f286e9f = L.marker(
+                [-23.560639, -46.672095],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_373f12c6c22981abd6e11ab27252b04a = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_42e2697352d13dc523404239eddc3455 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_ec4c5ca894408c4d282bd7837247e26a = $(`<div id=&quot;html_ec4c5ca894408c4d282bd7837247e26a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: OSCAR FREIRE B/C</div>`)[0];
+                popup_42e2697352d13dc523404239eddc3455.setContent(html_ec4c5ca894408c4d282bd7837247e26a);
+            
+        
+
+        marker_056822cb564d244b48b14e8d3f286e9f.bindPopup(popup_42e2697352d13dc523404239eddc3455)
+        ;
+
+        
+    
+    
+                marker_056822cb564d244b48b14e8d3f286e9f.setIcon(icon_373f12c6c22981abd6e11ab27252b04a);
+            
+    
+            var marker_eb2ce1e22f76e07b46df44175d1a9502 = L.marker(
+                [-23.558088, -46.667585],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_8f2884480ae759f094bb363e5eca6d4f = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_2e62fa5f2cbe407d344d46775ac4f215 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_488f8dc3c3223e86af589e2e84c8e960 = $(`<div id=&quot;html_488f8dc3c3223e86af589e2e84c8e960&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: CLINICAS B/C</div>`)[0];
+                popup_2e62fa5f2cbe407d344d46775ac4f215.setContent(html_488f8dc3c3223e86af589e2e84c8e960);
+            
+        
+
+        marker_eb2ce1e22f76e07b46df44175d1a9502.bindPopup(popup_2e62fa5f2cbe407d344d46775ac4f215)
+        ;
+
+        
+    
+    
+                marker_eb2ce1e22f76e07b46df44175d1a9502.setIcon(icon_8f2884480ae759f094bb363e5eca6d4f);
+            
+    
+            var marker_a298f4a3d23fa4836657b16611696543 = L.marker(
+                [-23.572945, -46.705052],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_400196c92de5dca5db0101a4a4392c4d = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_58a42959474bcba41f33ce0aa0f32aa8 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_1449c0426fe2d45427b62c0fba947912 = $(`<div id=&quot;html_1449c0426fe2d45427b62c0fba947912&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: PARADA VITAL BRASIL B/C</div>`)[0];
+                popup_58a42959474bcba41f33ce0aa0f32aa8.setContent(html_1449c0426fe2d45427b62c0fba947912);
+            
+        
+
+        marker_a298f4a3d23fa4836657b16611696543.bindPopup(popup_58a42959474bcba41f33ce0aa0f32aa8)
+        ;
+
+        
+    
+    
+                marker_a298f4a3d23fa4836657b16611696543.setIcon(icon_400196c92de5dca5db0101a4a4392c4d);
+            
+    
+            var marker_cad995befb248d1a2462a1a662d27d47 = L.marker(
+                [-23.58095, -46.711425],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_043f2d51c1c209fc9e98d0a8029b19d6 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_c093e8cdd50584481b933e0ef8eb5576 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_08a9155ad6467e72c55f99b90d15a8f7 = $(`<div id=&quot;html_08a9155ad6467e72c55f99b90d15a8f7&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: ROQUETE PINTO B/C</div>`)[0];
+                popup_c093e8cdd50584481b933e0ef8eb5576.setContent(html_08a9155ad6467e72c55f99b90d15a8f7);
+            
+        
+
+        marker_cad995befb248d1a2462a1a662d27d47.bindPopup(popup_c093e8cdd50584481b933e0ef8eb5576)
+        ;
+
+        
+    
+    
+                marker_cad995befb248d1a2462a1a662d27d47.setIcon(icon_043f2d51c1c209fc9e98d0a8029b19d6);
+            
+    
+            var marker_4802d1b7b694834ae4b3f46fdd8873c8 = L.marker(
+                [-23.582836, -46.713849],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_d87b9e07c4d1591d80f66526c3bd98d1 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_9848cb445975ac8acd79e64888d23d52 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_308ef177fc1c74cc86ac6c3dc1ca5579 = $(`<div id=&quot;html_308ef177fc1c74cc86ac6c3dc1ca5579&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: FUND CARLOS CHAGAS B/C</div>`)[0];
+                popup_9848cb445975ac8acd79e64888d23d52.setContent(html_308ef177fc1c74cc86ac6c3dc1ca5579);
+            
+        
+
+        marker_4802d1b7b694834ae4b3f46fdd8873c8.bindPopup(popup_9848cb445975ac8acd79e64888d23d52)
+        ;
+
+        
+    
+    
+                marker_4802d1b7b694834ae4b3f46fdd8873c8.setIcon(icon_d87b9e07c4d1591d80f66526c3bd98d1);
+            
+    
+            var marker_4a30bbdeea7ac0802d9a488dfbf85a10 = L.marker(
+                [-23.564642, -46.678602],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_0e1734fcb753b0ef449da25df87f0edd = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_9f152bd7ae366a2e15c5f508e3e20026 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_625a73af6ef7e8fbfa86d48eeea1938e = $(`<div id=&quot;html_625a73af6ef7e8fbfa86d48eeea1938e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: BRASIL B/C</div>`)[0];
+                popup_9f152bd7ae366a2e15c5f508e3e20026.setContent(html_625a73af6ef7e8fbfa86d48eeea1938e);
+            
+        
+
+        marker_4a30bbdeea7ac0802d9a488dfbf85a10.bindPopup(popup_9f152bd7ae366a2e15c5f508e3e20026)
+        ;
+
+        
+    
+    
+                marker_4a30bbdeea7ac0802d9a488dfbf85a10.setIcon(icon_0e1734fcb753b0ef449da25df87f0edd);
+            
+    
+            var marker_519d3cff7b0ec0e3166b333795f7e22e = L.marker(
+                [-23.567915, -46.684758],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_947112ce82f3d30fa735b1c01c1b8aa9 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_b1beadf488afeda599bb773bfffac67b = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_a1ccb907b1b93eeb5cda52fef47fb5af = $(`<div id=&quot;html_a1ccb907b1b93eeb5cda52fef47fb5af&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: CAP. ANTONIO ROSA B/C</div>`)[0];
+                popup_b1beadf488afeda599bb773bfffac67b.setContent(html_a1ccb907b1b93eeb5cda52fef47fb5af);
+            
+        
+
+        marker_519d3cff7b0ec0e3166b333795f7e22e.bindPopup(popup_b1beadf488afeda599bb773bfffac67b)
+        ;
+
+        
+    
+    
+                marker_519d3cff7b0ec0e3166b333795f7e22e.setIcon(icon_947112ce82f3d30fa735b1c01c1b8aa9);
+            
+    
+            var marker_a39be61a0ab0cf378cf66a093c91a3b1 = L.marker(
+                [-23.571709, -46.696577],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_9796d553e751b7d6a9783af0863e2da2 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_7d973b2d8d746eb1558cfe47f94b5fcd = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_9126068d40d446af35d6e82ccd586eaf = $(`<div id=&quot;html_9126068d40d446af35d6e82ccd586eaf&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: PARADA ELDORADO B/C</div>`)[0];
+                popup_7d973b2d8d746eb1558cfe47f94b5fcd.setContent(html_9126068d40d446af35d6e82ccd586eaf);
+            
+        
+
+        marker_a39be61a0ab0cf378cf66a093c91a3b1.bindPopup(popup_7d973b2d8d746eb1558cfe47f94b5fcd)
+        ;
+
+        
+    
+    
+                marker_a39be61a0ab0cf378cf66a093c91a3b1.setIcon(icon_9796d553e751b7d6a9783af0863e2da2);
+            
+    
+            var marker_2ba624ef815affddc0349d8d1fb34b3e = L.marker(
+                [-23.586951, -46.725216],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_f5656e349b08f7d2cdd9b7637284b492 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_03480ab7a4ff2964474f139801ab258b = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_5c789511e60b04ce06b3270e16fb4221 = $(`<div id=&quot;html_5c789511e60b04ce06b3270e16fb4221&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: JORGE JOÃO SAAD B/C</div>`)[0];
+                popup_03480ab7a4ff2964474f139801ab258b.setContent(html_5c789511e60b04ce06b3270e16fb4221);
+            
+        
+
+        marker_2ba624ef815affddc0349d8d1fb34b3e.bindPopup(popup_03480ab7a4ff2964474f139801ab258b)
+        ;
+
+        
+    
+    
+                marker_2ba624ef815affddc0349d8d1fb34b3e.setIcon(icon_f5656e349b08f7d2cdd9b7637284b492);
+            
+    
+            var marker_cdb4e52a3d6bbadd5682d73dda0cb857 = L.marker(
+                [-23.588191, -46.727332],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_bfecb9133bb455ae1cb2791ed5e553eb = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;blue&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;bus&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_ae0d8057373e80ba5f7708a1e779049a = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_0dc7e038cf7052a9391e615ccb85f9c2 = $(`<div id=&quot;html_0dc7e038cf7052a9391e615ccb85f9c2&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Parada: EDEN B/C</div>`)[0];
+                popup_ae0d8057373e80ba5f7708a1e779049a.setContent(html_0dc7e038cf7052a9391e615ccb85f9c2);
+            
+        
+
+        marker_cdb4e52a3d6bbadd5682d73dda0cb857.bindPopup(popup_ae0d8057373e80ba5f7708a1e779049a)
+        ;
+
+        
+    
+    
+                marker_cdb4e52a3d6bbadd5682d73dda0cb857.setIcon(icon_bfecb9133bb455ae1cb2791ed5e553eb);
+            
+    
+            var marker_213932fa4ab937aa0e11fef53bedf285 = L.marker(
+                [-23.610286000000002, -46.752301],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_f89da89a7ccd2c24ad3b59eaa920e531 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;red&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;location-arrow&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_f684d1b8c50aefc3858b5df60db3ce92 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_28434cb94411042f8eb654bcc8690929 = $(`<div id=&quot;html_28434cb94411042f8eb654bcc8690929&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Prefixo: 81754</div>`)[0];
+                popup_f684d1b8c50aefc3858b5df60db3ce92.setContent(html_28434cb94411042f8eb654bcc8690929);
+            
+        
+
+        marker_213932fa4ab937aa0e11fef53bedf285.bindPopup(popup_f684d1b8c50aefc3858b5df60db3ce92)
+        ;
+
+        
+    
+    
+                marker_213932fa4ab937aa0e11fef53bedf285.setIcon(icon_f89da89a7ccd2c24ad3b59eaa920e531);
+            
+    
+            var marker_b1a460abb97c6447c15a2f4b238dd6dd = L.marker(
+                [-23.599408250000003, -46.74150425],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_c935e330989332dd507ec72229cd4141 = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;red&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;location-arrow&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_2928e48493257d3b402ddd4a4a519dfe = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_26e4e9f26e435d0f1ad19fddffc1d464 = $(`<div id=&quot;html_26e4e9f26e435d0f1ad19fddffc1d464&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Prefixo: 81966</div>`)[0];
+                popup_2928e48493257d3b402ddd4a4a519dfe.setContent(html_26e4e9f26e435d0f1ad19fddffc1d464);
+            
+        
+
+        marker_b1a460abb97c6447c15a2f4b238dd6dd.bindPopup(popup_2928e48493257d3b402ddd4a4a519dfe)
+        ;
+
+        
+    
+    
+                marker_b1a460abb97c6447c15a2f4b238dd6dd.setIcon(icon_c935e330989332dd507ec72229cd4141);
+            
+    
+            var marker_bb9fc745f42e015848cce06fe0f89544 = L.marker(
+                [-23.584919, -46.719221000000005],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_b47ed7121928248763b6487e09260aeb = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;red&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;location-arrow&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_0604157986b1d0396a4a1f8e3e7db634 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_96a58e3b9977f17c60c5ca98a06e3679 = $(`<div id=&quot;html_96a58e3b9977f17c60c5ca98a06e3679&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Prefixo: 81370</div>`)[0];
+                popup_0604157986b1d0396a4a1f8e3e7db634.setContent(html_96a58e3b9977f17c60c5ca98a06e3679);
+            
+        
+
+        marker_bb9fc745f42e015848cce06fe0f89544.bindPopup(popup_0604157986b1d0396a4a1f8e3e7db634)
+        ;
+
+        
+    
+    
+                marker_bb9fc745f42e015848cce06fe0f89544.setIcon(icon_b47ed7121928248763b6487e09260aeb);
+            
+    
+            var marker_e94e843fea3dd1b17c6a1faab6bdabfe = L.marker(
+                [-23.569701000000002, -46.68799425],
+                {
+}
+            ).addTo(map_7c7a842a4369ce3c7e0c77369b548b11);
+        
+    
+            var icon_70f5d1d6463d8c2699441c426a8cd5ac = L.AwesomeMarkers.icon(
+                {
+  &quot;markerColor&quot;: &quot;red&quot;,
+  &quot;iconColor&quot;: &quot;white&quot;,
+  &quot;icon&quot;: &quot;location-arrow&quot;,
+  &quot;prefix&quot;: &quot;fa&quot;,
+  &quot;extraClasses&quot;: &quot;fa-rotate-0&quot;,
+}
+            );
+        
+    
+        var popup_6f464db399fb108026240fd29d7846e9 = L.popup({
+  &quot;maxWidth&quot;: &quot;100%&quot;,
+});
+
+        
+            
+                var html_e3833d04dd38f82699da8c72c998c483 = $(`<div id=&quot;html_e3833d04dd38f82699da8c72c998c483&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;>Prefixo: 81108</div>`)[0];
+                popup_6f464db399fb108026240fd29d7846e9.setContent(html_e3833d04dd38f82699da8c72c998c483);
+            
+        
+
+        marker_e94e843fea3dd1b17c6a1faab6bdabfe.bindPopup(popup_6f464db399fb108026240fd29d7846e9)
+        ;
+
+        
+    
+    
+                marker_e94e843fea3dd1b17c6a1faab6bdabfe.setIcon(icon_70f5d1d6463d8c2699441c426a8cd5ac);
+            
+</script>
+</html>" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""></iframe></div></div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>api</category>
+  <category>mapas</category>
+  <category>folium</category>
+  <category>python</category>
+  <guid>https://your-website-url.example.com/posts/Consulta do Onibus/</guid>
+  <pubDate>Sun, 23 Nov 2025 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Regressão Linear: Estudo vs Salário</title>
+  <dc:creator>Rafael Tasca</dc:creator>
+  <link>https://your-website-url.example.com/posts/Atividade_Regressao/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Este post apresenta a análise de regressão linear gerada com Python.</p>
+<div id="8724fc2f" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. DADOS</span></span>
+<span id="cb1-6"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span>:</span>
+<span id="cb1-7">    valores_x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.loadtxt(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X.txt'</span>)</span>
+<span id="cb1-8">    valores_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.loadtxt(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y.txt'</span>)</span>
+<span id="cb1-9"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">except</span>:</span>
+<span id="cb1-10">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Dados de exemplo (caso não leia o arquivo)</span></span>
+<span id="cb1-11">    valores_x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>])</span>
+<span id="cb1-12">    valores_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1200</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1400</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1700</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2100</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2500</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2900</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3400</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3800</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4200</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span>])</span>
+<span id="cb1-13"></span>
+<span id="cb1-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. CÁLCULOS (Matriz)</span></span>
+<span id="cb1-15">X_matriz <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.column_stack((np.ones(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(valores_x)), valores_x))</span>
+<span id="cb1-16">Xt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X_matriz.T</span>
+<span id="cb1-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calcula a inversa e os coeficientes</span></span>
+<span id="cb1-18">XtX_inv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linalg.inv(np.dot(Xt, X_matriz))</span>
+<span id="cb1-19">beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.dot(XtX_inv, np.dot(Xt, valores_y))</span>
+<span id="cb1-20">a, b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> beta[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], beta[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb1-21"></span>
+<span id="cb1-22"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. GRÁFICO (Usando Matplotlib - Mais seguro)</span></span>
+<span id="cb1-23">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span>
+<span id="cb1-24"></span>
+<span id="cb1-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Pontos (Dados Reais)</span></span>
+<span id="cb1-26">plt.scatter(valores_x, valores_y, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'blue'</span>, s<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Dados Reais'</span>)</span>
+<span id="cb1-27"></span>
+<span id="cb1-28"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Reta (Regressão)</span></span>
+<span id="cb1-29">plt.plot(valores_x, a <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> valores_x, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Regressão Linear'</span>)</span>
+<span id="cb1-30"></span>
+<span id="cb1-31"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Legendas e Títulos</span></span>
+<span id="cb1-32">plt.title(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Regressão Linear (Intercepto=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>a<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">, Inclinação=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>b<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)"</span>)</span>
+<span id="cb1-33">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Anos de Estudo"</span>)</span>
+<span id="cb1-34">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Salário"</span>)</span>
+<span id="cb1-35">plt.legend()</span>
+<span id="cb1-36">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>)</span>
+<span id="cb1-37"></span>
+<span id="cb1-38"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Exibe o gráfico</span></span>
+<span id="cb1-39">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Atividade_Regressao/index_files/figure-html/cell-2-output-1.png" width="676" height="450" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>regressão</category>
+  <category>dados</category>
+  <guid>https://your-website-url.example.com/posts/Atividade_Regressao/</guid>
+  <pubDate>Sun, 23 Nov 2025 00:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

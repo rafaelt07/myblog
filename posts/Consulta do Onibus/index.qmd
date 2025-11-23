@@ -1,0 +1,62 @@
+---
+title: "Monitoramento de Frota de Ônibus"
+author: "Rafael Tasca"
+date: "2025-11-23"
+categories: [api, mapas, folium, python]
+jupyter: python3
+---
+
+Esta atividade monitora em tempo real a posição dos ônibus da linha 8700-10.
+
+```{python}
+import requests
+import folium
+
+# --- CONFIGURAÇÃO ---
+TOKEN = '3f9cf7fdd8895aa93d08aea526cde96f307931cbb79a1e726e6a5b946eb2d6f4'
+LINHA_BUSCA = '8700-10' 
+
+# 1. AUTENTICAÇÃO
+session = requests.Session()
+url_auth = f'http://api.olhovivo.sptrans.com.br/v2.1/Login/Autenticar?token={TOKEN}'
+session.post(url_auth)
+
+# 2. BUSCAR LINHA
+url_linha = f'http://api.olhovivo.sptrans.com.br/v2.1/Linha/Buscar?termosBusca={LINHA_BUSCA}'
+response_linha = session.get(url_linha)
+codigo_linha = response_linha.json()[0]['cl']
+
+# 3. BUSCAR PARADAS
+url_paradas = f'http://api.olhovivo.sptrans.com.br/v2.1/Parada/BuscarParadasPorLinha?codigoLinha={codigo_linha}'
+dados_paradas = session.get(url_paradas).json()
+
+# Centralizar mapa
+lat_inicial = dados_paradas[0]['py'] if dados_paradas else -23.55
+lon_inicial = dados_paradas[0]['px'] if dados_paradas else -46.63
+
+m = folium.Map(location=[lat_inicial, lon_inicial], zoom_start=13)
+
+# Adiciona Paradas (Azul)
+for p in dados_paradas:
+    folium.Marker(
+        [p['py'], p['px']],
+        popup=f"Parada: {p['np']}",
+        icon=folium.Icon(color='blue', icon='bus', prefix='fa')
+    ).add_to(m)
+
+# 4. BUSCAR ÔNIBUS EM TEMPO REAL
+url_posicao = f'http://api.olhovivo.sptrans.com.br/v2.1/Posicao/Linha?codigoLinha={codigo_linha}'
+dados_posicao = session.get(url_posicao).json()
+
+# Adiciona Ônibus (Vermelho)
+if 'vs' in dados_posicao:
+    for v in dados_posicao['vs']:
+        folium.Marker(
+            [v['py'], v['px']],
+            popup=f"Prefixo: {v['p']}",
+            icon=folium.Icon(color='red', icon='location-arrow', prefix='fa')
+        ).add_to(m)
+
+# Exibe o mapa
+m
+```
